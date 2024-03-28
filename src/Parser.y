@@ -57,7 +57,7 @@ import Data.Map ( fromList )
 -- ***************
 -- *             *
 -- * parentheses *
-
+-- *             *
 -- ***************
 
 '('    { AlexTokenTag AlexRawToken_LPAREN _ }
@@ -84,11 +84,12 @@ import Data.Map ( fromList )
 -- *********************
 
 'id'                    { AlexTokenTag AlexRawToken_KWID            _ }
+'op'                    { AlexTokenTag AlexRawToken_OP              _ }
 'end'                   { AlexTokenTag AlexRawToken_END             _ }
 'raw'                   { AlexTokenTag AlexRawToken_RAW             _ }
 'loc'                   { AlexTokenTag AlexRawToken_LOC             _ }
 'Arg'                   { AlexTokenTag AlexRawToken_ARG             _ }
-'var'                   { AlexTokenTag AlexRawToken_VAR             _ }
+'var_field'             { AlexTokenTag AlexRawToken_VAR             _ }
 'null'                  { AlexTokenTag AlexRawToken_NULL            _ }
 'test'                  { AlexTokenTag AlexRawToken_TEST            _ }
 'line'                  { AlexTokenTag AlexRawToken_LINE            _ }
@@ -104,6 +105,8 @@ import Data.Map ( fromList )
 'cond'                  { AlexTokenTag AlexRawToken_COND            _ }
 'body'                  { AlexTokenTag AlexRawToken_BODY            _ }
 'update'                { AlexTokenTag AlexRawToken_UPDATE          _ }
+'range'                 { AlexTokenTag AlexRawToken_RANGE           _ }
+'index'                 { AlexTokenTag AlexRawToken_INDEX           _ }
 'paren'                 { AlexTokenTag AlexRawToken_PAREN           _ }
 'false'                 { AlexTokenTag AlexRawToken_FALSE           _ }
 'start'                 { AlexTokenTag AlexRawToken_START           _ }
@@ -129,7 +132,9 @@ import Data.Map ( fromList )
 'alternate'             { AlexTokenTag AlexRawToken_ALTERNATE       _ }
 'consequent'            { AlexTokenTag AlexRawToken_CONSEQUENT      _ }
 'argument'              { AlexTokenTag AlexRawToken_ARGUMENT        _ }
+'bodystmt'              { AlexTokenTag AlexRawToken_BODYSTMT        _ }
 'arguments'             { AlexTokenTag AlexRawToken_ARGUMENTS       _ }
+'collection'            { AlexTokenTag AlexRawToken_COLLECTION      _ }
 'generator'             { AlexTokenTag AlexRawToken_GENERATOR       _ }
 'expression'            { AlexTokenTag AlexRawToken_EXPRESSION      _ }
 'async'                 { AlexTokenTag AlexRawToken_ASYNC           _ }
@@ -190,6 +195,7 @@ QUOTED_BOOL { AlexTokenTag AlexRawToken_QUOTED_BOOL _ }
 '==' { AlexTokenTag AlexRawToken_OP_EQ       _ }
 '='  { AlexTokenTag AlexRawToken_OP_ASSIGN   _ }
 '*'  { AlexTokenTag AlexRawToken_OP_TIMES    _ }
+'..' { AlexTokenTag AlexRawToken_OP_DOTDOT   _ }
 '++' { AlexTokenTag AlexRawToken_OP_PLUSPLUS _ }
 
 -- ****************************
@@ -375,7 +381,16 @@ var_field:
 -- * simple variable *
 -- *                 *
 -- *******************
-var_simple: identifier { $1 }
+var_simple:
+'{'
+    'type' ':' 'var_field' ','
+    'loc' ':' location ','
+    'value' ':' identifier ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
+}
 
 -- ************
 -- *          *
@@ -425,10 +440,10 @@ exp_assign_tag:
 -- ***********
 exp_int:
 '{'
-    'type' ':' 'Literal' ','
-    'value' ':' INT ','
-    'raw' ':' QUOTED_INT ','
-    'loc' ':' location
+    'type' ':' ID ','
+    'loc' ':' location ','
+    'value' ':' QUOTED_INT ','
+    'comments' ':' '[' ']'
 '}'
 {
     Nothing
@@ -486,6 +501,24 @@ exp_call   { $1 } |
 exp_binop  { $1 } |
 exp_assign { $1 }
 
+-- **************
+-- *            *
+-- * collection *
+-- *            *
+-- **************
+collection:
+'{'
+    'type' ':' 'range' ','
+    'loc' ':' location ','
+    'left' ':' exp ','
+    'operator' ':' operator ','
+    'right' ':' exp ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
+}
+
 -- ************
 -- *          *
 -- * stmt_for *
@@ -494,11 +527,11 @@ exp_assign { $1 }
 stmt_for:
 '{'
     'type' ':' 'ForStatement' ','
-    'init' ':' exp ','
-    'test' ':' exp ','
+    'loc' ':' location ','
+    'index' ':' var ','
+    'collection' ':' collection ','
     'update' ':' stmt ','
     'body' ':' stmts ','
-    'loc' ':' location
 '}'
 {
     Nothing
@@ -509,12 +542,28 @@ stmt_for:
 -- * operator *
 -- *          *
 -- ************
-operator:
-'++' { Nothing } |
+actual_op:
+'..' { Nothing } |
 '==' { Nothing } |
 '*'  { Nothing } |
 '<'  { Nothing } |
 '='  { Nothing }
+
+-- ************
+-- *          *
+-- * operator *
+-- *          *
+-- ************
+operator:
+'{'
+    'type' ':' 'op' ','
+    'loc' ':' location ','
+    'value' ':' actual_op ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
+}
 
 -- ********
 -- *      *
@@ -619,7 +668,9 @@ stmt_return { $1 }
 stmts:
 '{'
     'type' ':' 'stmts' ','
-    'loc' ':' location
+    'loc' ':' location ','
+    'body' ':' '[' commalistof(stmt) ']' ','
+    'comments' ':' '[' ']'
 '}'
 {
     []
@@ -658,6 +709,21 @@ params:
     Nothing
 }
 
+-- ************
+-- *          *
+-- * bodystmt *
+-- *          *
+-- ************
+bodystmt:
+'{'
+    'type' ':' 'bodystmt' ','
+    'loc' ':' location ','
+    'stmts' ':' stmts
+'}'
+{
+    Nothing
+}
+
 -- ****************
 -- *              *
 -- * dec_function *
@@ -670,12 +736,8 @@ dec_function: '{'
     'operator' ':' 'null' ','
     'name' ':' identifier ','
     'params' ':' params ','
-    'body' ':' '[' commalistof(dec) ']' ','
-    'generator' ':' bool ','
-    'params' ':' '[' commalistof(param) ']' ','
+    'bodystmt' ':' bodystmt
     'id' ':' identifier ','
-    'expression' ':' bool ','
-    'async' ':' bool ','
 '}'
 {
     Left "MMM"
