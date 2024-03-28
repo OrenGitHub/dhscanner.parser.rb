@@ -122,6 +122,7 @@ import Location
 @KW_SRC_TYPE        = \"sourceType\"
 @KW_EXPRESSION      = \"expression\"
 @KW_REQUIREDS       = \"requireds\"
+@KW_PREDICATE       = \"predicate\"
 @KW_ALTERNATE       = \"alternate\"
 @KW_CONSEQUENT      = \"consequent\"
 @KW_STMT_ECHO       = "Stmt_Echo"
@@ -142,7 +143,7 @@ import Location
 -- *            *
 -- **************
 
-@KW_STMT_IF     = \"IfStatement\"
+@KW_STMT_IF     = \"if\"
 @KW_STMT_FOR    = \"for\"
 @KW_STMT_BLOCK  = \"BlockStatement\"
 @KW_STMT_RETURN = \"ReturnStatement\"
@@ -282,6 +283,7 @@ tokens :-
 @KW_CONTENTS        { lex' AlexRawToken_CONTENTS        }
 @KW_OPERATOR        { lex' AlexRawToken_OPERATOR        }
 @KW_COMMENTS        { lex' AlexRawToken_COMMENTS        }
+@KW_PREDICATE       { lex' AlexRawToken_PREDICATE       }
 @KW_REQUIREDS       { lex' AlexRawToken_REQUIREDS       }
 @KW_ALTERNATE       { lex' AlexRawToken_ALTERNATE       }
 @KW_CONSEQUENT      { lex' AlexRawToken_CONSEQUENT      }
@@ -489,6 +491,7 @@ data AlexRawToken
      | AlexRawToken_CONTENTS        -- ^ Reserved Keyword
      | AlexRawToken_COMMENTS        -- ^ Reserved Keyword
      | AlexRawToken_ALTERNATE       -- ^ Reserved Keyword
+     | AlexRawToken_PREDICATE       -- ^ Reserved Keyword
      | AlexRawToken_REQUIREDS       -- ^ Reserved Keyword
      | AlexRawToken_CONSEQUENT      -- ^ Reserved Keyword
      | AlexRawToken_ARGUMENT        -- ^ Reserved Keyword

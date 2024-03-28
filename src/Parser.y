@@ -127,6 +127,7 @@ import Data.Map ( fromList )
 'contents'              { AlexTokenTag AlexRawToken_CONTENTS        _ }
 'operator'              { AlexTokenTag AlexRawToken_OPERATOR        _ }
 'comments'              { AlexTokenTag AlexRawToken_COMMENTS        _ }
+'predicate'             { AlexTokenTag AlexRawToken_PREDICATE        _ }
 'requireds'             { AlexTokenTag AlexRawToken_REQUIREDS       _ }
 'alternate'             { AlexTokenTag AlexRawToken_ALTERNATE       _ }
 'consequent'            { AlexTokenTag AlexRawToken_CONSEQUENT      _ }
@@ -640,10 +641,10 @@ exp_assign_tag { $1 }
 stmt_if:
 '{'
     'type' ':' 'IfStatement' ','
-    'test' ':' exp ','
-    'consequent' ':' stmts ','
-    'alternate' ':' stmts ','
-    'loc' ':' location
+    'loc' ':' location ','
+    'predicate' ':' exp ','
+    'stmts' ':' stmts ','
+    'comments' ':' '[' ']'
 '}'
 {
     Nothing
