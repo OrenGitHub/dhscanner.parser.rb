@@ -88,6 +88,7 @@ import Location
 @KW_COND            = "cond"
 @KW_BODY            = \"body\"
 @KW_UPDATE          = \"update\"
+@KW_PAREN           = \"paren\"
 @KW_FALSE           = false
 @KW_START           = \"start\"
 @KW_EXPRS           = "exprs"
@@ -99,12 +100,15 @@ import Location
 @KW_PARAMS          = \"params\"
 @KW_OBJECT          = \"object\"
 @KW_PREFIX          = \"prefix\"
+@KW_TARGET          = \"target\"
 @KW_COLUMN          = \"column\"
 @KW_LITERAL         = \"Literal\"
 @KW_PROGRAM         = \"program\"
 @KW_COMPUTED        = \"computed\"
 @KW_PROPERTY        = \"property\"
+@KW_CONTENTS        = \"contents\"
 @KW_OPERATOR        = \"operator\"
+@KW_COMMENTS        = \"comments\"
 @KW_ARGUMENT        = \"argument\"
 @KW_ARGUMENTS       = \"arguments\"
 @KW_CALLEE          = \"callee\"
@@ -112,13 +116,14 @@ import Location
 @KW_GENERATOR       = \"generator\"
 @KW_SRC_TYPE        = \"sourceType\"
 @KW_EXPRESSION      = \"expression\"
+@KW_REQUIREDS       = \"requireds\"
 @KW_ALTERNATE       = \"alternate\"
 @KW_CONSEQUENT      = \"consequent\"
 @KW_STMT_ECHO       = "Stmt_Echo"
 @KW_EXPR_VAR        = "Expr_Variable"
 @KW_STMT_EXPR       = "Stmt_Expression"
 @KW_SCALAR_INT      = "Scalar_Int"
-@KW_IDENTIFIER      = \"Identifier\"
+@KW_IDENTIFIER      = \"ident\"
 @KW_RETURN_TYPE     = "returnType"
 @KW_STMT_FUNCTION   = "Stmt_Function"
 @KW_FUNCTION_DEC    = \"def\"
@@ -246,6 +251,7 @@ tokens :-
 @KW_COND            { lex' AlexRawToken_COND            }
 @KW_BODY            { lex' AlexRawToken_BODY            }
 @KW_UPDATE          { lex' AlexRawToken_UPDATE          }
+@KW_PAREN           { lex' AlexRawToken_PAREN           }
 @KW_FALSE           { lex' AlexRawToken_FALSE           }
 @KW_START           { lex' AlexRawToken_START           }
 @KW_EXPRS           { lex' AlexRawToken_EXPRS           }
@@ -257,12 +263,16 @@ tokens :-
 @KW_PARAMS          { lex' AlexRawToken_PARAMS          }
 @KW_OBJECT          { lex' AlexRawToken_OBJECT          }
 @KW_PREFIX          { lex' AlexRawToken_PREFIX          }
+@KW_TARGET          { lex' AlexRawToken_TARGET          }
 @KW_COLUMN          { lex' AlexRawToken_COLUMN          }
 @KW_LITERAL         { lex' AlexRawToken_LITERAL         }
 @KW_PROGRAM         { lex' AlexRawToken_PROGRAM         }
 @KW_PROPERTY        { lex' AlexRawToken_PROPERTY        }
 @KW_COMPUTED        { lex' AlexRawToken_COMPUTED        }
+@KW_CONTENTS        { lex' AlexRawToken_CONTENTS        }
 @KW_OPERATOR        { lex' AlexRawToken_OPERATOR        }
+@KW_COMMENTS        { lex' AlexRawToken_COMMENTS        }
+@KW_REQUIREDS       { lex' AlexRawToken_REQUIREDS       }
 @KW_ALTERNATE       { lex' AlexRawToken_ALTERNATE       }
 @KW_CONSEQUENT      { lex' AlexRawToken_CONSEQUENT      }
 @KW_ARGUMENT        { lex' AlexRawToken_ARGUMENT        }
@@ -441,6 +451,7 @@ data AlexRawToken
      | AlexRawToken_BODY            -- ^ Reserved Keyword
      | AlexRawToken_START           -- ^ Reserved Keyword
      | AlexRawToken_UPDATE          -- ^ Reserved Keyword
+     | AlexRawToken_PAREN           -- ^ Reserved Keyword
      | AlexRawToken_FALSE           -- ^ Reserved Keyword
      | AlexRawToken_EXPRS           -- ^ Reserved Keyword
      | AlexRawToken_VALUE           -- ^ Reserved Keyword
@@ -452,12 +463,16 @@ data AlexRawToken
      | AlexRawToken_PREFIX          -- ^ Reserved Keyword
      | AlexRawToken_PARAMS          -- ^ Reserved Keyword
      | AlexRawToken_COLUMN          -- ^ Reserved Keyword
+     | AlexRawToken_TARGET          -- ^ Reserved Keyword
      | AlexRawToken_LITERAL         -- ^ Reserved Keyword
      | AlexRawToken_PROGRAM         -- ^ Reserved Keyword
      | AlexRawToken_PROPERTY        -- ^ Reserved Keyword
      | AlexRawToken_COMPUTED        -- ^ Reserved Keyword
      | AlexRawToken_OPERATOR        -- ^ Reserved Keyword
+     | AlexRawToken_CONTENTS        -- ^ Reserved Keyword
+     | AlexRawToken_COMMENTS        -- ^ Reserved Keyword
      | AlexRawToken_ALTERNATE       -- ^ Reserved Keyword
+     | AlexRawToken_REQUIREDS       -- ^ Reserved Keyword
      | AlexRawToken_CONSEQUENT      -- ^ Reserved Keyword
      | AlexRawToken_ARGUMENT        -- ^ Reserved Keyword
      | AlexRawToken_ARGUMENTS       -- ^ Reserved Keyword

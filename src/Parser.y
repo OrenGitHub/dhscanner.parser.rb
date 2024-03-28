@@ -104,6 +104,7 @@ import Data.Map ( fromList )
 'cond'                  { AlexTokenTag AlexRawToken_COND            _ }
 'body'                  { AlexTokenTag AlexRawToken_BODY            _ }
 'update'                { AlexTokenTag AlexRawToken_UPDATE          _ }
+'paren'                 { AlexTokenTag AlexRawToken_PAREN           _ }
 'false'                 { AlexTokenTag AlexRawToken_FALSE           _ }
 'start'                 { AlexTokenTag AlexRawToken_START           _ }
 'exprs'                 { AlexTokenTag AlexRawToken_EXPRS           _ }
@@ -116,11 +117,15 @@ import Data.Map ( fromList )
 'prefix'                { AlexTokenTag AlexRawToken_PREFIX          _ }
 'params'                { AlexTokenTag AlexRawToken_PARAMS          _ }
 'column'                { AlexTokenTag AlexRawToken_COLUMN          _ }
+'target'                { AlexTokenTag AlexRawToken_TARGET          _ }
 'Literal'               { AlexTokenTag AlexRawToken_LITERAL         _ }
 'Program'               { AlexTokenTag AlexRawToken_PROGRAM         _ }
 'property'              { AlexTokenTag AlexRawToken_PROPERTY        _ }
 'computed'              { AlexTokenTag AlexRawToken_COMPUTED        _ }
+'contents'              { AlexTokenTag AlexRawToken_CONTENTS        _ }
 'operator'              { AlexTokenTag AlexRawToken_OPERATOR        _ }
+'comments'              { AlexTokenTag AlexRawToken_COMMENTS        _ }
+'requireds'             { AlexTokenTag AlexRawToken_REQUIREDS       _ }
 'alternate'             { AlexTokenTag AlexRawToken_ALTERNATE       _ }
 'consequent'            { AlexTokenTag AlexRawToken_CONSEQUENT      _ }
 'argument'              { AlexTokenTag AlexRawToken_ARGUMENT        _ }
@@ -297,8 +302,9 @@ ID      { Nothing } |
 identifier:
 '{'
     'type' ':' 'Identifier' ','
-    'name' ':' tokenID ','
-    'loc' ':' location
+    'loc' ':' location ','
+    'value' ':' tokenID ','
+    'comments' ':' '[' ']' 
 '}'
 {
     Nothing
@@ -620,6 +626,38 @@ stmts:
 } |
 'null' { [] }
 
+-- ************
+-- *          *
+-- * contents *
+-- *          *
+-- ************
+contents:
+'{'
+    'type' ':' 'params' ','
+    'loc' ':' location ','
+    'requireds' ':' '[' commalistof(identifier) ']' ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
+}
+
+-- **********
+-- *        *
+-- * params *
+-- *        *
+-- **********
+params:
+'{'
+    'type' ':' 'paren' ','
+    'loc' ':' location ','
+    'contents' ':' contents ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
+}
+
 -- ****************
 -- *              *
 -- * dec_function *
@@ -628,6 +666,10 @@ stmts:
 dec_function: '{'
     'type' ':' 'FunctionDeclaration' ','
     'loc' ':' location ','
+    'target' ':' 'null' ','
+    'operator' ':' 'null' ','
+    'name' ':' identifier ','
+    'params' ':' params ','
     'body' ':' '[' commalistof(dec) ']' ','
     'generator' ':' bool ','
     'params' ':' '[' commalistof(param) ']' ','
