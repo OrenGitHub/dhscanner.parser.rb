@@ -125,7 +125,7 @@ import Location
 @KW_ALTERNATE       = \"alternate\"
 @KW_CONSEQUENT      = \"consequent\"
 @KW_STMT_ECHO       = "Stmt_Echo"
-@KW_EXPR_VAR        = "Expr_Variable"
+@KW_EXPR_VAR        = \"var_ref\"
 @KW_STMT_EXPR       = "Stmt_Expression"
 @KW_SCALAR_INT      = "Scalar_Int"
 @KW_IDENTIFIER      = \"ident\"
@@ -155,7 +155,7 @@ import Location
 -- ***************
 
 @KW_EXPR_CALL   = \"CallExpression\"
-@KW_EXPR_BINOP  = \"BinaryExpression\"
+@KW_EXPR_BINOP  = \"binary\"
 @KW_EXPR_MEMBER = \"MemberExpression\"
 @KW_EXPR_UPDATE = \"UpdateExpression\"
 @KW_EXPR_ASSIGN = \"AssignmentExpression\"
@@ -169,6 +169,7 @@ import Location
 @KW_OP_LT       = \"\<\"
 @KW_OP_EQ       = \"==\"
 @KW_OP_ASSIGN   = \"=\"
+@KW_OP_MINUS    = \"\-\"
 @KW_OP_TIMES    = \"\*\"
 @KW_OP_DOTDOT   = \"\.\.\"
 @KW_OP_PLUSPLUS = \"\+\+\"
@@ -349,6 +350,7 @@ tokens :-
 @KW_OP_LT       { lex' AlexRawToken_OP_LT       }
 @KW_OP_EQ       { lex' AlexRawToken_OP_EQ       }
 @KW_OP_ASSIGN   { lex' AlexRawToken_OP_ASSIGN   }
+@KW_OP_MINUS    { lex' AlexRawToken_OP_MINUS    }
 @KW_OP_TIMES    { lex' AlexRawToken_OP_TIMES    }
 @KW_OP_DOTDOT   { lex' AlexRawToken_OP_DOTDOT   }
 @KW_OP_PLUSPLUS { lex' AlexRawToken_OP_PLUSPLUS }
@@ -528,6 +530,7 @@ data AlexRawToken
      | AlexRawToken_OP_LT           -- ^ Reserved Keyword
      | AlexRawToken_OP_EQ           -- ^ Reserved Keyword
      | AlexRawToken_OP_ASSIGN       -- ^ Reserved Keyword
+     | AlexRawToken_OP_MINUS        -- ^ Reserved Keyword
      | AlexRawToken_OP_TIMES        -- ^ Reserved Keyword
      | AlexRawToken_OP_DOTDOT       -- ^ Reserved Keyword
      | AlexRawToken_OP_PLUSPLUS     -- ^ Reserved Keyword

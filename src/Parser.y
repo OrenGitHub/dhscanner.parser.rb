@@ -75,7 +75,6 @@ import Data.Map ( fromList )
 
 ':'    { AlexTokenTag AlexRawToken_COLON  _ }
 ','    { AlexTokenTag AlexRawToken_COMMA  _ }
-'-'    { AlexTokenTag AlexRawToken_HYPHEN _ }
 
 -- *********************
 -- *                   *
@@ -141,16 +140,13 @@ import Data.Map ( fromList )
 'callee'                { AlexTokenTag AlexRawToken_CALLEE          _ }
 'sourceType'            { AlexTokenTag AlexRawToken_SRC_TYPE        _ }
 'Stmt_Echo'             { AlexTokenTag AlexRawToken_STMT_ECHO       _ }
-'Expr_Variable'         { AlexTokenTag AlexRawToken_EXPR_VAR        _ }
+'expr_var'              { AlexTokenTag AlexRawToken_EXPR_VAR        _ }
 'Stmt_Expr'             { AlexTokenTag AlexRawToken_STMT_EXPR       _ }
 'Scalar_Int'            { AlexTokenTag AlexRawToken_SCALAR_INT      _ }
 'Identifier'            { AlexTokenTag AlexRawToken_IDENTIFIER      _ }
 'returnType'            { AlexTokenTag AlexRawToken_RETURN_TYPE     _ }
 'Stmt_Function'         { AlexTokenTag AlexRawToken_STMT_FUNCTION   _ }
 'FunctionDeclaration'   { AlexTokenTag AlexRawToken_FUNCTION_DEC    _ }
-'Expr_ConstFetch'       { AlexTokenTag AlexRawToken_EXPR_CONST_GET  _ }
-'Expr_BinaryOp_Plus'    { AlexTokenTag AlexRawToken_EXPR_BINOP_PLUS _ }
-'Expr_BinaryOp_Smaller' { AlexTokenTag AlexRawToken_EXPR_BINOP_LT   _ }
 
 -- *********
 -- *       *
@@ -194,6 +190,7 @@ QUOTED_BOOL { AlexTokenTag AlexRawToken_QUOTED_BOOL _ }
 '<'  { AlexTokenTag AlexRawToken_OP_LT       _ }
 '==' { AlexTokenTag AlexRawToken_OP_EQ       _ }
 '='  { AlexTokenTag AlexRawToken_OP_ASSIGN   _ }
+'-'  { AlexTokenTag AlexRawToken_OP_MINUS    _ }
 '*'  { AlexTokenTag AlexRawToken_OP_TIMES    _ }
 '..' { AlexTokenTag AlexRawToken_OP_DOTDOT   _ }
 '++' { AlexTokenTag AlexRawToken_OP_PLUSPLUS _ }
@@ -335,12 +332,30 @@ param:
     } 
 }
 
+-- ******************
+-- *                *
+-- * exp_var_simple *
+-- *                *
+-- ******************
+exp_var_simple:
+'{'
+    'type' ':' 'expr_var' ','
+    'loc' ':' location ','
+    'value' ':' identifier ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
+}
+
 -- ***********
 -- *         *
 -- * exp_var *
 -- *         *
 -- ***********
-exp_var: var { $1 }
+exp_var:
+exp_var_simple { $1 }
+
 
 -- *************
 -- *           *
@@ -350,10 +365,11 @@ exp_var: var { $1 }
 exp_binop:
 '{'
     'type' ':' 'BinaryExpression' ','
-    'operator' ':' operator ','
+    'loc' ':' location ','
     'left' ':' exp ','
+    'operator' ':' actual_op ','
     'right' ':' exp ','
-    'loc' ':' location
+    'comments' ':' '[' ']'
 '}'
 {
     Nothing
@@ -530,8 +546,7 @@ stmt_for:
     'loc' ':' location ','
     'index' ':' var ','
     'collection' ':' collection ','
-    'update' ':' stmt ','
-    'body' ':' stmts ','
+    'stmts' ':' stmts ','
 '}'
 {
     Nothing
@@ -546,6 +561,7 @@ actual_op:
 '..' { Nothing } |
 '==' { Nothing } |
 '*'  { Nothing } |
+'-'  { Nothing } |
 '<'  { Nothing } |
 '='  { Nothing }
 
