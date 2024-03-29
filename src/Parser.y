@@ -82,6 +82,7 @@ import Data.Map ( fromList )
 -- *                   *
 -- *********************
 
+'kw'                    { AlexTokenTag AlexRawToken_KW              _ }
 'id'                    { AlexTokenTag AlexRawToken_KWID            _ }
 'op'                    { AlexTokenTag AlexRawToken_OP              _ }
 'end'                   { AlexTokenTag AlexRawToken_END             _ }
@@ -104,6 +105,7 @@ import Data.Map ( fromList )
 'cond'                  { AlexTokenTag AlexRawToken_COND            _ }
 'body'                  { AlexTokenTag AlexRawToken_BODY            _ }
 'update'                { AlexTokenTag AlexRawToken_UPDATE          _ }
+'parts'                 { AlexTokenTag AlexRawToken_PARTS           _ }
 'range'                 { AlexTokenTag AlexRawToken_RANGE           _ }
 'index'                 { AlexTokenTag AlexRawToken_INDEX           _ }
 'paren'                 { AlexTokenTag AlexRawToken_PAREN           _ }
@@ -127,7 +129,7 @@ import Data.Map ( fromList )
 'contents'              { AlexTokenTag AlexRawToken_CONTENTS        _ }
 'operator'              { AlexTokenTag AlexRawToken_OPERATOR        _ }
 'comments'              { AlexTokenTag AlexRawToken_COMMENTS        _ }
-'predicate'             { AlexTokenTag AlexRawToken_PREDICATE        _ }
+'predicate'             { AlexTokenTag AlexRawToken_PREDICATE       _ }
 'requireds'             { AlexTokenTag AlexRawToken_REQUIREDS       _ }
 'alternate'             { AlexTokenTag AlexRawToken_ALTERNATE       _ }
 'consequent'            { AlexTokenTag AlexRawToken_CONSEQUENT      _ }
@@ -480,6 +482,21 @@ exp_bool:
 '}'
 {
     Nothing
+} |
+'{'
+    'type' ':' 'expr_var' ','
+    'loc' ':' location ','
+    'value' ':'
+    '{'
+        'type' ':' 'kw' ','
+        'loc' ':' location ','
+        'value' ':' QUOTED_BOOL ','
+        'comments' ':' '[' ']'
+    '}' ','
+    'comments' ':' '[' ']'
+'}'
+{
+    Nothing
 }
 
 -- ************
@@ -548,6 +565,7 @@ stmt_for:
     'index' ':' var ','
     'collection' ':' collection ','
     'stmts' ':' stmts ','
+    'comments' ':' '[' ']'
 '}'
 {
     Nothing
@@ -591,6 +609,21 @@ bool:
 'true'  { True  } |
 'false' { False }
 
+-- *************
+-- *           *
+-- * arguments *
+-- *           *
+-- *************
+arguments:
+'{'
+    'type' ':' 'args' ','
+    'loc' ':' location ','
+    'parts' ':' '[' commalistof(exp) ']' ','
+    'comments' ':' '[' ']' 
+'}'
+{
+}
+
 -- ***************
 -- *             *
 -- * stmt_return *
@@ -599,8 +632,9 @@ bool:
 stmt_return:
 '{'
     'type' ':' 'ReturnStatement' ','
-    'argument' ':' exp ','
-    'loc' ':' location
+    'loc' ':' location ','
+    'arguments' ':' arguments ','
+    'comments' ':' '[' ']'
 '}'
 {
     Nothing
@@ -735,7 +769,8 @@ bodystmt:
 '{'
     'type' ':' 'bodystmt' ','
     'loc' ':' location ','
-    'stmts' ':' stmts
+    'stmts' ':' stmts ','
+    'comments' ':' '[' ']'
 '}'
 {
     Nothing
@@ -753,8 +788,8 @@ dec_function: '{'
     'operator' ':' 'null' ','
     'name' ':' identifier ','
     'params' ':' params ','
-    'bodystmt' ':' bodystmt
-    'id' ':' identifier ','
+    'bodystmt' ':' bodystmt ','
+    'comments' ':' '[' ']'
 '}'
 {
     Left "MMM"

@@ -67,6 +67,7 @@ import Location
 -- * keywords *
 -- *          *
 -- ************
+@KW                 = \"kw\"
 @KW_ID              = \"id\"
 @KW_OP              = \"op\"
 @KW_END             = \"end\"
@@ -78,7 +79,7 @@ import Location
 @KW_TEST            = \"test\"
 @KW_LINE            = \"line\"
 @KW_TRUE            = true
-@KW_ARGS            = "args"
+@KW_ARGS            = \"args\"
 @KW_NAME            = \"name\"
 @KW_EXPR            =  expr
 @KW_MAME            =  Name
@@ -90,6 +91,7 @@ import Location
 @KW_BODY            = \"body\"
 @KW_UPDATE          = \"update\"
 @KW_INDEX           = \"index\"
+@KW_PARTS           = \"parts\"
 @KW_RANGE           = \"range\"
 @KW_PAREN           = \"paren\"
 @KW_FALSE           = false
@@ -146,7 +148,7 @@ import Location
 @KW_STMT_IF     = \"if\"
 @KW_STMT_FOR    = \"for\"
 @KW_STMT_BLOCK  = \"BlockStatement\"
-@KW_STMT_RETURN = \"ReturnStatement\"
+@KW_STMT_RETURN = \"return\"
 @KW_STMT_EXP    = \"ExpressionStatement\"
 
 -- ***************
@@ -238,6 +240,7 @@ tokens :-
 -- *          *
 -- ************
 
+@KW                 { lex' AlexRawToken_KW              }
 @KW_ID              { lex' AlexRawToken_KWID            }
 @KW_OP              { lex' AlexRawToken_OP              }
 @KW_END             { lex' AlexRawToken_END             }
@@ -260,6 +263,7 @@ tokens :-
 @KW_COND            { lex' AlexRawToken_COND            }
 @KW_BODY            { lex' AlexRawToken_BODY            }
 @KW_UPDATE          { lex' AlexRawToken_UPDATE          }
+@KW_PARTS           { lex' AlexRawToken_PARTS           }
 @KW_RANGE           { lex' AlexRawToken_RANGE           }
 @KW_INDEX           { lex' AlexRawToken_INDEX           }
 @KW_PAREN           { lex' AlexRawToken_PAREN           }
@@ -445,6 +449,7 @@ data AlexRawToken
      | AlexRawToken_LBRACE          -- ^ Parentheses __{__
      | AlexRawToken_RBRACE          -- ^ Parentheses __}__
  
+     | AlexRawToken_KW              -- ^ Reserved Keyword
      | AlexRawToken_KWID            -- ^ Reserved Keyword
      | AlexRawToken_OP              -- ^ Reserved Keyword
      | AlexRawToken_END             -- ^ Reserved Keyword
@@ -468,6 +473,7 @@ data AlexRawToken
      | AlexRawToken_BODY            -- ^ Reserved Keyword
      | AlexRawToken_START           -- ^ Reserved Keyword
      | AlexRawToken_UPDATE          -- ^ Reserved Keyword
+     | AlexRawToken_PARTS           -- ^ Reserved Keyword
      | AlexRawToken_RANGE           -- ^ Reserved Keyword
      | AlexRawToken_INDEX           -- ^ Reserved Keyword
      | AlexRawToken_PAREN           -- ^ Reserved Keyword
