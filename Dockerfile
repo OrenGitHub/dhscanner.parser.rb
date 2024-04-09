@@ -7,3 +7,5 @@ RUN apt-get install vim -y
 RUN echo "set number" > ~/.vimrc
 WORKDIR /parser.rb
 COPY . .
+RUN cabal build
+CMD ["cabal", "run"]

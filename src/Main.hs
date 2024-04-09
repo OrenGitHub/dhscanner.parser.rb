@@ -27,16 +27,22 @@ data SourceFile
      }
      deriving ( Generic, ToJSON, FromJSON )
 
+data Healthy = Healthy Bool deriving ( Generic )
+
+-- | This is just for the health check ...
+instance ToJSON Healthy where toJSON (Healthy status) = object [ "healthy" .= status ]
+
 data App = App
 
 mkYesod "App" [parseRoutes|
-/ HomeR GET POST
+/to/dhscanner/ast HomeR POST
+/healthcheck HealthcheckR GET
 |]
 
 instance Yesod App
 
-getHomeR :: Handler Value
-getHomeR = returnJson $ SourceFile { filename = "", content = "Michael" }
+getHealthcheckR :: Handler Value
+getHealthcheckR = returnJson $ Healthy True
 
 postHomeR :: Handler Value
 postHomeR = do
